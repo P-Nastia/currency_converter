@@ -14,8 +14,9 @@
                             result.innerText = parseFloat(fromValue) * item.USD;
                         }
                         else if (dropdownButtonTo.innerText == "EUR") {
+
                             fromCurrency.innerText = "1 " + dropdownButtonFrom.innerText + " = " + item.EUR + " EUR";
-                            resul.innerText = parseFloat(fromValue) * item.EUR;
+                            result.innerText = parseFloat(fromValue) * item.EUR;
                         }
                         else if (dropdownButtonTo.innerText == "UAH") {
                             fromCurrency.innerText = "1 " + dropdownButtonFrom.innerText + " = " + item.UAH + " UAH";
