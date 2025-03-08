@@ -1,0 +1,109 @@
+﻿
+body {
+    padding-left: 10%;
+    padding-right: 10%;
+    padding-top: 15%;
+    padding-bottom: 15%;
+}
+
+h1{
+    font-size:30px;
+    font-weight:bold;
+    justify-content:center;
+    display:flex;
+    margin:5px;
+    background-color: #5a85ed;
+}
+
+.ccy-container {
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+}
+
+.ccy-block{
+    height: 150px;
+    padding: 10px;
+}
+
+.flag{
+    height: auto;
+    width: 30px;
+    margin-right: 10px;
+}
+
+.my-title{
+    margin: 0 10px 200px 10px;
+}
+
+.btn-place{
+    justify-content:right;
+    display:flex;
+}
+
+.btn-convert {
+    border-radius: 50px;
+    height: 100px;
+    margin: auto 0 auto 0
+}
+
+.ccy-block{
+    padding-left:10px;
+}
+
+.result {
+    width: 220px;
+    height: 45px;
+    border-radius: 30px;
+    
+}
+
+@media only screen and (max-width: 960px) {
+    body {
+        padding-left: 30%;
+        padding-right: 30%;
+        padding-top: 30%;
+        justify-content: center;
+        align-items: center;
+    }
+    .ccy-container {
+        margin: auto;
+        display: table-row;
+        justify-content: center;
+        align-items: center;
+        padding: 5px;
+    }
+    .btn-convert {
+        height: 70px;
+        margin: 10px 30% 10px 30%;
+    }
+    .ccy-block {
+        height: 120px;
+        padding: 10px;
+    }
+
+    h1 {
+        margin-bottom: 20px;
+    }
+}
+
+@media only screen and (max-width: 760px) {
+    body {
+        padding-left: 25%;
+        padding-right: 25%;
+    }
+    h1 {
+        margin-bottom: 20px;
+    }
+}
+
+@media only screen and (max-width: 570px) {
+    body {
+        padding-left: 15%;
+        padding-right: 15%;
+    }
+    h1 {
+        margin-bottom: 20px;
+    }
+}

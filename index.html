@@ -1,0 +1,200 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
+    <link href="/styles/style.css" rel="stylesheet" />
+
+    <title>Currency converter</title>
+</head>
+<body>
+    <div>
+        <h1>Конвертер валют</h1>
+        <div class="ccy-container grid gap-8 mb-6 lg:mb-16 md:grid-cols-2">
+
+            <div class="ccy-block items-center bg-gray-50 rounded-lg shadow sm:flex" style="display: table-row">
+                <span class="my-title">У мене є:</span>
+                <div class="ccy-block pt-6">
+                    <div class="mb-4 flex items-center justify-between gap-4">
+                        <input id="fromValue" type="number" value=1 style=" border-radius: 30px" />
+                        <div class="relative">
+                            <button onclick="LoadList('dropdownButtonFrom')" id="dropdownButtonFrom" class="btn-place text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Оберіть валюту
+                                <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"></path></svg>
+                            </button>
+                            <ul onclick="FromDropClick()" id="dropdownMenuFrom" class="dropdown-menu absolute hidden text-gray-700 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 mt-1" aria-labelledby="dropdownDefaultButton">
+                            </ul>
+                        </div>
+                    </div>
+                    <span id="fromCurrency"></span>
+
+                </div>
+            </div>
+            <button onclick="Convert()" type="button" class="btn-convert text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 shadow-lg shadow-blue-500/50 font-medium text-md px-5 py-2.5 text-center me-2 mb-2 ">Конвертувати</button>
+
+            <div class="ccy-block items-center bg-gray-50 rounded-lg shadow sm:flex" style="display: table-row">
+                <span class="my-title">У мене буде:</span>
+                <div class="ccy-block pt-6">
+                    <div class="mb-4 flex items-center justify-between gap-4">
+                        <p id="result" type="number" value="1" class="result" />
+                        <div class="relative">
+                            <button id="dropdownButtonTo" onclick="LoadList('dropdownButtonTo')" class="btn-place text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Оберіть валюту
+                                <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"></path></svg>
+                            </button>
+                            <ul onclick="ToDropClick()" id="dropdownMenuTo" class="dropdown-menu absolute hidden text-gray-700 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 mt-1" aria-labelledby="dropdownDefaultButton">
+                            </ul>
+                        </div>
+                    </div>
+                    <span id="toCurrency"></span>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function LoadList(to) {
+            
+            if (to == "dropdownButtonFrom") {
+                const dropdownButtonTo = document.getElementById('dropdownButtonTo');
+                const list = document.getElementById('dropdownMenuFrom');
+                fetch('/ccy_list.json')
+                    .then(res => res.json())
+                    .then(data => {
+                        list.innerHTML = null;
+                        data.forEach(item => {
+
+                            if (item.ccy.includes(dropdownButtonTo.innerText) == false) {
+                                
+                                list.innerHTML += `
+      <button type="button" class="inline-flex w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white currency-option-from" data-value="${item.ccy}">
+          <div class="inline-flex items-center">
+           <img class="flag" src="${item.image}" />
+             ${item.ccy}
+          </div>
+      </button>
+      `
+                            }
+                        })
+
+                    });
+                FromDropClick();
+            }
+            else {
+                const dropdownButtonTo = document.getElementById('dropdownButtonFrom');
+                const list = document.getElementById('dropdownMenuTo');
+                fetch('/ccy_list.json')
+                    .then(res => res.json())
+                    .then(data => {
+                        list.innerHTML = null;
+                        data.forEach(item => {
+
+                            if (item.ccy.includes(dropdownButtonTo.innerText) == false) {
+                                list.innerHTML += `
+      <button type="button" class="inline-flex w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white currency-option-to" data-value="${item.ccy}">
+          <div class="inline-flex items-center">
+           <img class="flag" src="${item.image}" />
+             ${item.ccy}
+          </div>
+      </button>
+      `
+                            }
+                        })
+
+                    });
+                ToDropClick();
+            }
+           
+        }
+    </script>
+
+    <script>
+        function FromDropClick() {
+            const dropdownButton = document.getElementById('dropdownButtonFrom');
+            const currencyOptions = document.querySelectorAll('.currency-option-from');
+            const dropdownMenu = document.getElementById('dropdownMenuFrom');
+
+            dropdownButton.addEventListener('click', function () {
+                dropdownMenu.classList.toggle('hidden');
+            });
+
+            currencyOptions.forEach(option => {
+                option.addEventListener('click', function () {
+                    const selectedCurrency = option.getAttribute('data-value');
+                    dropdownButton.innerHTML = `${selectedCurrency} <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"></path></svg>`;
+
+                    dropdownMenu.classList.add('hidden');
+                });
+            });
+
+            
+        }
+    </script>
+
+    <script>
+        function ToDropClick() {
+            const dropdownButton = document.getElementById('dropdownButtonTo');
+            const dropdownMenu = document.getElementById('dropdownMenuTo');
+            const currencyOptions = document.querySelectorAll('.currency-option-to');
+
+            dropdownButton.addEventListener('click', function () {
+                
+                dropdownMenu.classList.toggle('hidden');
+            });
+
+            currencyOptions.forEach(option => {
+                option.addEventListener('click', function () {
+                    const selectedCurrency = option.getAttribute('data-value');
+
+                    dropdownButton.innerHTML = `${selectedCurrency} <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"></path></svg>`;
+
+                    dropdownMenu.classList.add('hidden');
+                });
+            });
+
+            
+        }
+    </script>
+
+    <script>
+        function Convert() {
+            const dropdownButtonFrom = document.getElementById('dropdownButtonFrom');
+            const dropdownButtonTo = document.getElementById('dropdownButtonTo');
+            const fromValue = document.getElementById('fromValue').value;
+            const result = document.getElementById('result');
+            if (dropdownButtonFrom.innerText != "Оберіть валюту" && dropdownButtonTo.innerText != "Оберіть валюту") {
+                fetch('/currencies.json')
+                    .then(res => res.json())
+                    .then(data => {
+                        data.forEach(item => {
+                            if (item.baseCcy == dropdownButtonFrom.innerText) {
+                                if (dropdownButtonTo.innerText == "USD") {
+                                    fromCurrency.innerText = "1 " + dropdownButtonFrom.innerText + " = " + item.USD + " USD";
+                                    result.innerText = parseFloat(fromValue) * item.USD;
+                                }
+                                else if (dropdownButtonTo.innerText == "EUR") {
+                                    fromCurrency.innerText = "1 " + dropdownButtonFrom.innerText + " = " + item.EUR + " EUR";
+                                    resul.innerText = parseFloat(fromValue) * item.EUR;
+                                }
+                                else if (dropdownButtonTo.innerText == "UAH") {
+                                    fromCurrency.innerText = "1 " + dropdownButtonFrom.innerText + " = " + item.UAH + " UAH";
+                                    result.innerText = parseFloat(fromValue) * item.UAH;
+                                }
+                                else if (dropdownButtonTo.innerText == "PLN") {
+                                    fromCurrency.innerText = "1 " + dropdownButtonFrom.innerText + " = " + item.PLN + " PLN";
+                                    result.innerText = parseFloat(fromValue) * item.PLN;
+                                }
+                            }
+                        })
+
+                    });
+            }
+        }
+    </script>
+
+</body>
+</html>
